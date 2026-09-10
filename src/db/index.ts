@@ -11,16 +11,16 @@ const globalForDb = globalThis as typeof globalThis & {
   __arenaNextJsPostgresqlPool?: Pool;
 };
 
-const isProduction = process.env.NODE_ENV === "production";
+const useSupabaseTlsRelaxation = databaseUrl.includes("supabase.com");
 
 export const pool =
   globalForDb.__arenaNextJsPostgresqlPool ??
   new Pool({
     connectionString: databaseUrl,
-    ssl: isProduction ? { rejectUnauthorized: false } : undefined,
+    ssl: useSupabaseTlsRelaxation ? { rejectUnauthorized: false } : undefined,
   });
 
-if (!isProduction) {
+if (process.env.NODE_ENV !== "production") {
   globalForDb.__arenaNextJsPostgresqlPool = pool;
 }
 
